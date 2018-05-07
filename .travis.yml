@@ -1,0 +1,18 @@
+sudo: required
+
+language: cpp
+
+services:
+  - docker
+
+jobs:
+  include:
+    - script: |
+        docker run --name STRETCH -it -v ${TRAVIS_BUILD_DIR}:/repo.git debian:stretch /bin/bash -c '
+        TRAVIS_EVENT_TYPE="$1"
+        set -e # exit on failure
+        set -x # trace for debug
+        echo "Build triggered by ${TRAVIS_EVENT_TYPE}"
+        apt-get update
+        apt-get install -y python3
+        /repo.git/src/test.py' bash "${TRAVIS_EVENT_TYPE}"
